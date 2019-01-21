@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .box {
+            width: 50px;
+            height: 50px;
+            background: black;
+            display: inline-block;
+            margin: 1px;
+        }
+
+        .mask{
+            width: 50px;
+            height: 50px;
+            background: red;
+            display: inline-block;
+            margin: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="fbox">
+
+    </div>
+
+    <script>
+        var fbox = document.getElementsByClassName('fbox')[0];
+        var line = 8;
+        var col = 7;
+        var index = 0;
+        var boxArr = [];
+
+        //  创建方块
+        function createbox() {
+            var box = document.createElement('div');
+            box.className = 'box';
+            box.index = index;
+            box.flag = false; //默认未被点击
+            index++;
+            box.onclick = dianji;
+            boxArr.push(box);
+            return box;
+
+        }
+
+        // 创建所有盒子
+        function createAll() {
+            for (var i = 0; i < col * line; i++) {
+                fbox.style.width = (50 + 2) * col + 'px';
+                fbox.style.height = (50 + 2) * line + 'px';
+                fbox.appendChild(createbox());
+            }
+        }
+        createAll();
+
+        // 点击事件
+        function dianji() {
+            click_(this.index);
+        }
+
+
+        // 获取所有方块
+        var allBox = document.querySelectorAll('.box');
+
+        function click_(index){
+
+            // 顺序按照  左   上  右   下
+            var click_Arr = [allBox[index-1],allBox[index-col],allBox[index+1],allBox[index + col],allBox[index]];
+
+
+            //判断  第一行
+            if(index<=col-1){
+                var num1 = click_Arr.indexOf(allBox[index-col]);
+                click_Arr.splice(num1,1);
+            }
+            
+
+            //  判断左边
+            if(index % col == 0){
+                var num2 = click_Arr.indexOf(allBox[index-1]);
+
+                click_Arr.splice(num2,1);
+            }
+
+            if((index+1) % col == 0){
+                var num3 = click_Arr.indexOf(allBox[index +1 ]);
+                click_Arr.splice(num3,1);
+            }
+
+            // 判断下
+            if(line*col -col -1 <index){
+                var num4 = click_Arr.indexOf(allBox[index+col]);
+                click_Arr.splice(num4,1);
+            }
+
+            for(var i = 0; i < click_Arr.length;i++){
+                if(!click_Arr[i].flag){
+                    click_Arr[i].className = 'mask';
+                    click_Arr[i].flag = true;
+                }
+                else{
+                    click_Arr[i].className = 'box';
+                    click_Arr[i].flag = false;
+                }
+            }
+        }
+
+
+        // 出现的数量
+        var num_ = 8;
+
+
+        //方块下标
+        var pos;
+
+
+        // 随机方块
+        function randomBox(){
+            for(var i = 0;i<num_; i++){
+                pos = random(0,allBox.length-1);
+                allBox[pos].onclick();
+            }
+        }
+
+
+        // 页面加载，随机出线盒子
+        window.onload = function(){
+            randomBox();
+        }
+
+        // 随机函数
+        function random(min,max){
+            return Math.round(Math.random()*(max-min)+min);
+        }
+    </script>
+</body>
+
+</html>
